@@ -529,11 +529,13 @@
     background: rgba(26,92,58,0.2);
     border: 1px solid rgba(26,92,58,0.5);
     color: #6ee7a0;
+    display: block;
   }
   .form-message.error {
     background: rgba(107,26,42,0.2);
     border: 1px solid rgba(107,26,42,0.5);
     color: #f87171;
+    display: block;
   }
 
   /* FOOTER */
@@ -788,7 +790,7 @@
       <div class="contact-item-icon">✉</div>
       <div>
         <div class="contact-item-label">E-posta</div>
-        <div class="contact-item-value">iletisim@yankura.com</div>
+        <div class="contact-item-value"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="0b62676e7f627862664b726a65607e796a25686466">[email&#160;protected]</a></div>
       </div>
     </div>
     <div class="contact-item reveal">
@@ -809,8 +811,8 @@
 
   <div class="reveal">
     <!-- ⚠️ FORMSPREE: Aşağıdaki action URL'ini kendi Formspree endpoint'inle değiştir -->
-    <!-- Örnek: action=https://formspree.io/f/xvzvqnwn -->
-    <form class="contact-form" id="contactForm" action="https://formspree.io/f/xvzvqnwn" method="POST">
+    <!-- Örnek: action="https://formspree.io/f/XXXXXXXX" -->
+    <form class="contact-form" id="contactForm" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
       <div class="form-message" id="formSuccess">
         ✓ Mesajınız alındı! En kısa sürede size dönüş yapacağız.
       </div>
@@ -877,7 +879,7 @@
   </div>
 </footer>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
   // CURSOR
   const cursor = document.getElementById('cursor');
   const ring = document.getElementById('cursorRing');
@@ -936,10 +938,20 @@
       });
       if (res.ok) {
         successMsg.classList.add('success');
+        successMsg.style.display = 'block';
         form.reset();
         setTimeout(() => { successMsg.style.display = 'none'; }, 6000);
       } else {
         throw new Error('Server error');
       }
     } catch {
-      errorMs
+      errorMsg.classList.add('error');
+      errorMsg.style.display = 'block';
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Gönder';
+    }
+  });
+</script>
+</body>
+</html>
