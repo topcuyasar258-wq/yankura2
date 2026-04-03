@@ -1,259 +1,390 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yankura — Reklam Ajansı</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --emerald: #1a5c3a;
-            --emerald-light: #2a7a50;
-            --burgundy: #6b1a2a;
-            --plum: #3d1a4a;
-            --gold: #c9a84c;
-            --gold-light: #e2c97e;
-            --charcoal: #1c1c1e;
-            --charcoal-mid: #2a2a2d;
-            --off-white: #f5f0e8;
-            --text-muted: #8a8a8a;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yankura — Reklam Ajansı</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --emerald: #1a5c3a;
+    --emerald-light: #2a7a50;
+    --burgundy: #6b1a2a;
+    --plum: #3d1a4a;
+    --gold: #c9a84c;
+    --gold-light: #e2c97e;
+    --charcoal: #1c1c1e;
+    --charcoal-mid: #2a2a2d;
+    --off-white: #f5f0e8;
+    --text-muted: #8a8a8a;
+  }
+  [data-theme="light"] {
+    --charcoal: #f0ebe0;
+    --charcoal-mid: #e4ddd0;
+    --off-white: #1c1c1e;
+    --text-muted: #5a5248;
+    --gold: #9a7a20;
+    --gold-light: #b08c28;
+  }
 
-        [data-theme="light"] {
-            --charcoal: #f0ebe0;
-            --charcoal-mid: #e4ddd0;
-            --off-white: #1c1c1e;
-            --text-muted: #5a5248;
-            --gold: #9a7a20;
-            --gold-light: #b08c28;
-        }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--charcoal);
+    color: var(--off-white);
+    font-family: 'DM Sans', sans-serif;
+    overflow-x: hidden;
+    cursor: none;
+    transition: background 0.4s, color 0.4s;
+  }
 
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        html { scroll-behavior: smooth; }
-        body {
-            background: var(--charcoal);
-            color: var(--off-white);
-            font-family: 'DM Sans', sans-serif;
-            overflow-x: hidden;
-            cursor: none;
-            transition: background 0.4s, color 0.4s;
-        }
+  /* ── SCROLL PROGRESS ── */
+  .scroll-bar {
+    position: fixed; top: 0; left: 0; height: 2px; width: 0%;
+    background: linear-gradient(90deg, var(--plum), var(--gold), var(--emerald));
+    z-index: 9999; pointer-events: none; transition: width 0.08s linear;
+  }
 
-        /* ── SCROLL PROGRESS ── */
-        .scroll-bar {
-            position: fixed; top: 0; left: 0; height: 2px; width: 0%;
-            background: linear-gradient(90deg, var(--plum), var(--gold), var(--emerald));
-            z-index: 9999; pointer-events: none;
-        }
+  /* ── CURSOR ── */
+  .cursor {
+    position: fixed; width: 10px; height: 10px; background: var(--gold);
+    border-radius: 50%; pointer-events: none; z-index: 9997;
+    transform: translate(-50%,-50%); transition: transform 0.08s;
+    top: 0; left: 0;
+  }
+  .cursor-ring {
+    position: fixed; width: 36px; height: 36px;
+    border: 1px solid var(--gold); border-radius: 50%;
+    pointer-events: none; z-index: 9996;
+    transform: translate(-50%,-50%); transition: all 0.18s ease; opacity: 0.6;
+    top: 0; left: 0;
+  }
+  @media (hover: none) { .cursor, .cursor-ring { display: none; } body { cursor: auto; } }
 
-        /* ── CURSOR ── */
-        .cursor {
-            position: fixed; width: 10px; height: 10px; background: var(--gold);
-            border-radius: 50%; pointer-events: none; z-index: 9999;
-            transform: translate(-50%,-50%);
-        }
-        .cursor-ring {
-            position: fixed; width: 36px; height: 36px;
-            border: 1px solid var(--gold); border-radius: 50%;
-            pointer-events: none; z-index: 9998;
-            transform: translate(-50%,-50%); transition: width 0.2s, height 0.2s, opacity 0.2s; opacity: 0.6;
-        }
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.4rem 4rem;
+    transition: background 0.4s, backdrop-filter 0.4s;
+  }
+  nav.scrolled {
+    background: rgba(28,28,30,0.92);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(201,168,76,0.12);
+  }
+  [data-theme="light"] nav.scrolled { background: rgba(240,235,224,0.92); }
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif; font-size: 2rem;
+    letter-spacing: 0.1em; color: var(--gold); text-decoration: none; cursor: none;
+  }
+  .nav-links { display: flex; gap: 2rem; list-style: none; align-items: center; }
+  .nav-links a {
+    font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--off-white); text-decoration: none; opacity: 0.7;
+    transition: opacity 0.2s, color 0.2s; cursor: none;
+  }
+  .nav-links a:hover { opacity: 1; color: var(--gold); }
 
-        /* ── NAV ── */
-        nav {
-            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 1.4rem 4rem; transition: all 0.4s;
-        }
-        nav.scrolled {
-            background: rgba(28,28,30,0.85); backdrop-filter: blur(10px);
-            padding: 1rem 4rem; border-bottom: 1px solid rgba(201,168,76,0.1);
-        }
+  /* MOBILE HAMBURGER */
+  .hamburger {
+    display: none; flex-direction: column; gap: 5px;
+    background: none; border: none; cursor: pointer; padding: 4px;
+  }
+  .hamburger span {
+    display: block; width: 24px; height: 2px;
+    background: var(--gold); transition: all 0.3s;
+  }
+  .hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px,5px); }
+  .hamburger.open span:nth-child(2) { opacity: 0; }
+  .hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px,-5px); }
 
-        .nav-logo { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; color: var(--gold); text-decoration: none; }
-        .nav-links { display: flex; gap: 2rem; list-style: none; }
-        .nav-links a { font-size: 0.75rem; text-transform: uppercase; color: var(--off-white); text-decoration: none; opacity: 0.7; transition: 0.3s; }
-        .nav-links a:hover { opacity: 1; color: var(--gold); }
+  .mobile-menu {
+    display: none; position: fixed; inset: 0; z-index: 99;
+    background: rgba(28,28,30,0.97); backdrop-filter: blur(16px);
+    flex-direction: column; align-items: center; justify-content: center;
+    gap: 2.5rem;
+  }
+  [data-theme="light"] .mobile-menu { background: rgba(240,235,224,0.97); }
+  .mobile-menu.open { display: flex; }
+  .mobile-menu a {
+    font-family: 'Bebas Neue', sans-serif; font-size: 2.8rem;
+    letter-spacing: 0.08em; color: var(--off-white); text-decoration: none;
+    transition: color 0.2s;
+  }
+  .mobile-menu a:hover { color: var(--gold); }
+  .mobile-menu .menu-close {
+    position: absolute; top: 1.5rem; right: 1.5rem;
+    background: none; border: none; font-size: 1.8rem;
+    color: var(--gold); cursor: pointer;
+  }
 
-        /* ── HERO ── */
-        #hero {
-            min-height: 100vh; display: flex; align-items: center;
-            position: relative; overflow: hidden; padding: 0 4rem;
-        }
-        .hero-bg { position: absolute; inset: 0; background: radial-gradient(circle at 80% 20%, rgba(107,26,42,0.15), transparent), radial-gradient(circle at 20% 80%, rgba(26,92,58,0.1), transparent); }
-        .hero-content { position: relative; z-index: 2; }
-        .hero-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(4rem, 12vw, 10rem); line-height: 0.9; }
-        .hero-title span { color: var(--gold); }
-        
-        /* ── ANALİZ BÖLÜMÜ (Düzeltildi) ── */
-        #analyze { padding: 6rem 4rem; background: var(--charcoal-mid); display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; }
-        .analyze-card { background: var(--charcoal); padding: 2.5rem; border: 1px solid rgba(201,168,76,0.1); position: relative; }
-        .ig-row { display: flex; margin-bottom: 1rem; }
-        .ig-at { background: var(--plum); padding: 1rem; color: var(--gold); font-family: 'Bebas Neue'; }
-        .ig-input { flex: 1; padding: 1rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(201,168,76,0.2); color: white; outline: none; }
-        
-        #analyzeBtn { 
-            width: 100%; padding: 1rem; background: transparent; border: 1px solid var(--gold); 
-            color: var(--gold); text-transform: uppercase; letter-spacing: 2px; cursor: none; transition: 0.3s;
-        }
-        #analyzeBtn:hover { background: var(--gold); color: var(--charcoal); }
+  /* ── HERO ── */
+  #hero {
+    min-height: 100vh; display: flex; align-items: center;
+    position: relative; overflow: hidden; padding: 0 4rem;
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 60% 80% at 80% 50%, rgba(107,26,42,0.35) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 60% at 20% 80%, rgba(26,92,58,0.25) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 50% at 50% 0%, rgba(61,26,74,0.3) 0%, transparent 60%);
+  }
+  .hero-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(201,168,76,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(201,168,76,0.04) 1px, transparent 1px);
+    background-size: 80px 80px;
+  }
+  .hero-content { position: relative; z-index: 2; max-width: 900px; }
+  .hero-label {
+    font-size: 0.75rem; letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 2rem;
+    opacity: 0; animation: fadeUp 0.8s ease 0.2s forwards;
+  }
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(4rem, 12vw, 11rem); line-height: 0.9;
+    color: var(--off-white); opacity: 0; animation: fadeUp 0.8s ease 0.4s forwards;
+  }
+  .hero-title span { color: var(--gold); display: block; }
+  .hero-sub {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1rem, 2vw, 1.5rem); font-style: italic;
+    color: var(--text-muted); margin-top: 1.5rem; max-width: 500px; line-height: 1.6;
+    opacity: 0; animation: fadeUp 0.8s ease 0.6s forwards;
+  }
+  .hero-cta {
+    margin-top: 2.5rem; display: flex; gap: 1rem; flex-wrap: wrap;
+    opacity: 0; animation: fadeUp 0.8s ease 0.8s forwards;
+  }
+  .btn-gold {
+    display: inline-block; padding: 0.9rem 2rem;
+    background: var(--gold); color: var(--charcoal);
+    font-size: 0.78rem; font-weight: 500; letter-spacing: 0.15em;
+    text-transform: uppercase; text-decoration: none; cursor: none;
+    transition: background 0.2s, transform 0.2s; white-space: nowrap;
+  }
+  .btn-gold:hover { background: var(--gold-light); transform: translateY(-2px); }
+  .btn-outline {
+    display: inline-block; padding: 0.9rem 2rem;
+    border: 1px solid rgba(201,168,76,0.5); color: var(--gold);
+    font-size: 0.78rem; font-weight: 500; letter-spacing: 0.15em;
+    text-transform: uppercase; text-decoration: none; cursor: none;
+    transition: all 0.2s; white-space: nowrap;
+  }
+  .btn-outline:hover { border-color: var(--gold); background: rgba(201,168,76,0.08); transform: translateY(-2px); }
+  
+  /* ── ANALİZ ── */
+  #analyze { padding: 6rem 4rem; background: var(--charcoal-mid); display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: start; }
+  .analyze-intro .section-title { margin-bottom: 1rem; }
+  .analyze-intro p { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 1.15rem; color: var(--text-muted); line-height: 1.75; margin-bottom: 1.5rem; }
+  
+  .analyze-card {
+    background: var(--charcoal); border: 1px solid rgba(201,168,76,0.15);
+    padding: 2.5rem; position: relative; overflow: hidden;
+  }
+  .analyze-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--plum), var(--gold), var(--emerald)); }
 
-        .analyze-progress-bar-wrap { height: 4px; background: rgba(255,255,255,0.1); margin: 1.5rem 0; display: none; }
-        .analyze-progress-bar-fill { height: 100%; width: 0%; background: var(--gold); transition: width 0.4s; }
+  .ig-row { display: flex; }
+  .ig-at {
+    background: rgba(61,26,74,0.6); border: 1px solid rgba(201,168,76,0.2); border-right: none;
+    padding: 0.9rem 1rem; color: var(--gold);
+    font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem;
+    display: flex; align-items: center;
+  }
+  .ig-input {
+    flex: 1; background: rgba(201,168,76,0.04); border: 1px solid rgba(201,168,76,0.2);
+    color: var(--off-white); padding: 0.9rem 1rem;
+    font-family: 'DM Sans', sans-serif; font-size: 0.95rem;
+    outline: none; transition: border-color 0.2s; min-width: 0;
+  }
+  #analyzeBtn {
+    width: 100%; margin-top: 0.75rem; padding: 0.95rem;
+    background: transparent; border: 1px solid var(--gold);
+    color: var(--gold); font-family: 'DM Sans', sans-serif; font-size: 0.8rem;
+    font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase;
+    cursor: none; transition: all 0.25s;
+  }
+  #analyzeBtn:hover:not(:disabled) { background: var(--gold); color: var(--charcoal); }
 
-        /* ── FOOTER & THEME TOGGLE ── */
-        footer { padding: 4rem; border-top: 1px solid rgba(201,168,76,0.1); display: flex; justify-content: space-between; align-items: center; }
-        .theme-toggle-btn {
-            background: none; border: 1px solid var(--gold); color: var(--gold);
-            padding: 0.6rem 1.2rem; cursor: none; font-size: 0.7rem; text-transform: uppercase;
-        }
+  /* ANALYZE RESULT & STEPS */
+  #analyzeResult { display: none; margin-top: 1.5rem; }
+  #analyzeResult.active { display: block; }
+  .analyze-progress-bar-wrap { height: 3px; background: rgba(201,168,76,0.1); margin-bottom: 1.2rem; display: none; }
+  .analyze-progress-bar-wrap.active { display: block; }
+  .analyze-progress-bar-fill { height: 100%; width: 0; background: linear-gradient(90deg, var(--plum), var(--gold)); transition: width 0.3s ease; }
+  
+  .analyze-step { display: flex; align-items: flex-start; gap: 10px; padding: 9px 0; border-bottom: 1px solid rgba(201,168,76,0.07); opacity: 0; transition: opacity 0.3s; }
+  .analyze-step.show { opacity: 1; }
+  .analyze-step.done .step-label { color: var(--off-white); }
+  .step-spin { width: 13px; height: 13px; border: 1.5px solid rgba(201,168,76,0.2); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.7s linear infinite; }
+  
+  /* RESULT CARD */
+  .analyze-score-card { margin-top: 1.5rem; display: none; }
+  .score-header { display: flex; align-items: center; gap: 1.5rem; padding: 1.5rem; background: linear-gradient(135deg, rgba(61,26,74,0.3), rgba(107,26,42,0.2)); border: 1px solid rgba(201,168,76,0.25); }
+  .score-circle svg { width: 72px; height: 72px; transform: rotate(-90deg); }
+  .score-fill { fill: none; stroke: var(--gold); stroke-width: 5; stroke-dasharray: 204; stroke-dashoffset: 204; transition: stroke-dashoffset 1.2s ease; }
 
-        /* ── ANIMATIONS ── */
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .fade-in { animation: fadeUp 0.8s forwards; }
+  /* ── FOOTER & THEME TOGGLE ── */
+  footer { background: var(--charcoal); border-top: 1px solid rgba(201,168,76,0.1); padding: 2.5rem 4rem; display: flex; align-items: center; justify-content: space-between; }
+  .theme-toggle-btn {
+    display: flex; align-items: center; gap: 10px;
+    background: none; border: 1px solid var(--gold); color: var(--gold);
+    padding: 0.6rem 1.2rem; cursor: none; font-size: 0.7rem; text-transform: uppercase; transition: all 0.3s;
+  }
+  .theme-toggle-btn:hover { background: var(--gold); color: var(--charcoal); }
 
-    </style>
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* RESPONSIVE */
+  @media (max-width: 992px) {
+    #hero, section, #analyze { padding: 4rem 2rem; }
+    #analyze { grid-template-columns: 1fr; }
+    .nav-links { display: none; }
+    .hero-title { font-size: 4rem; }
+  }
+</style>
 </head>
-<body data-theme="dark">
+<body>
 
-    <div class="scroll-bar" id="scrollBar"></div>
-    <div class="cursor" id="cursor"></div>
-    <div class="cursor-ring" id="cursorRing"></div>
+  <div class="scroll-bar" id="scrollBar"></div>
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
 
-    <nav id="navbar">
-        <a href="#" class="nav-logo">YANKURA</a>
-        <ul class="nav-links">
-            <li><a href="#hero">Ana Sayfa</a></li>
-            <li><a href="#services">Hizmetler</a></li>
-            <li><a href="#analyze">Analiz</a></li>
-            <li><a href="#contact">İletişim</a></li>
-        </ul>
-    </nav>
+  <nav id="navbar">
+    <a href="#" class="nav-logo">YANKURA</a>
+    <ul class="nav-links">
+      <li><a href="#hero">Başlangıç</a></li>
+      <li><a href="#analyze">Analiz</a></li>
+      <li><a href="#contact">İletişim</a></li>
+    </ul>
+  </nav>
 
-    <section id="hero">
-        <div class="hero-bg"></div>
-        <div class="hero-content">
-            <p class="hero-label fade-in">Dijital Strateji & Kreatif Ajans</p>
-            <h1 class="hero-title fade-in">GELECEĞİ <span>YANKILA.</span></h1>
-            <div class="hero-cta fade-in">
-                <a href="#analyze" class="btn-gold">Ücretsiz Analiz</a>
-                <a href="#portfolio" class="btn-outline">Portfolyo</a>
-            </div>
+  <section id="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-grid"></div>
+    <div class="hero-content">
+      <p class="hero-label">Dijital Strateji & Kreatif Ajans</p>
+      <h1 class="hero-title">GELECEĞİ <span>YANKILA.</span></h1>
+      <p class="hero-sub">Algoritmaların ötesine geçin. Markanızı dijitalin yeni dönemine hazırlıyoruz.</p>
+      <div class="hero-cta">
+        <a href="#analyze" class="btn-gold">Ücretsiz Analiz</a>
+        <a href="#portfolio" class="btn-outline">İşlerimiz</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="analyze">
+    <div class="analyze-intro">
+      <h2 class="section-title" style="font-family:'Bebas Neue'; font-size: 4rem;">ALGORİTMA <br> CHECK-UP</h2>
+      <p>Instagram hesabınızın gücünü ölçün. Viral potansiyelinizi yapay zeka ile analiz edelim.</p>
+    </div>
+    <div class="analyze-card">
+      <div class="ig-row">
+        <div class="ig-at">@</div>
+        <input type="text" class="ig-input" placeholder="kullaniciadin" id="igInput">
+      </div>
+      <button id="analyzeBtn">Analizi Başlat</button>
+
+      <div id="analyzeResult">
+        <div class="analyze-progress-bar-wrap">
+          <div class="analyze-progress-bar-fill"></div>
         </div>
-    </section>
-
-    <section id="analyze">
-        <div class="analyze-intro">
-            <h2 class="section-title">Algoritma <br> Check-up</h2>
-            <p>Instagram hesabınızın gücünü ölçün. Viral potansiyelinizi yapay zeka ile analiz edelim.</p>
+        <div class="analyze-step">
+          <div class="step-spin"></div>
+          <div class="step-label">Veriler Çekiliyor...</div>
         </div>
-        <div class="analyze-card">
-            <div class="ig-row">
-                <div class="ig-at">@</div>
-                <input type="text" class="ig-input" placeholder="kullaniciadin" id="igInput">
-            </div>
-            <button id="analyzeBtn">Analizi Başlat</button>
-            
-            <div class="analyze-progress-bar-wrap" id="progressWrap">
-                <div class="analyze-progress-bar-fill" id="progressFill"></div>
-            </div>
-            <div id="statusText" style="font-size: 0.8rem; color: var(--gold); margin-top: 10px;"></div>
+        <div class="analyze-step">
+          <div class="step-spin"></div>
+          <div class="step-label">Etkileşim Oranı Hesaplanıyor...</div>
         </div>
-    </section>
+        <div class="analyze-step">
+          <div class="step-spin"></div>
+          <div class="step-label">Algoritma Puanı Belirleniyor...</div>
+        </div>
+      </div>
 
-    <footer>
-        <div class="footer-logo">YANKURA</div>
-        <button class="theme-toggle-btn" id="themeToggle">Temayı Değiştir</button>
-        <div class="footer-text">© 2026 Yankura Advertising. Tüm hakları saklıdır.</div>
-    </footer>
+      <div class="analyze-score-card">
+        <div class="score-header">
+          <div class="score-circle">
+            <svg><circle class="score-fill" cx="36" cy="36" r="32.5"></circle></svg>
+            <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-family:'Bebas Neue'; color:var(--gold);">%84</div>
+          </div>
+          <div>
+            <div style="font-family:'Bebas Neue'; font-size:1.4rem;">POTANSİYEL YÜKSEK</div>
+            <div style="font-size:0.6rem; color:var(--text-muted);">HESAP DURUMU: AKTİF</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-    <script>
-        // 1. ÖZEL İMLEÇ (CURSOR)
-        const cursor = document.getElementById('cursor');
-        const cursorRing = document.getElementById('cursorRing');
+  <footer>
+    <div class="footer-logo">YANKURA</div>
+    <button class="theme-toggle-btn" id="themeToggle">TEMAYI DEĞİŞTİR</button>
+    <div style="font-size:0.7rem; color:var(--text-muted);">© 2026 YANKURA ADVERTISING</div>
+  </footer>
 
-        document.addEventListener('mousemove', (e) => {
-            cursor.style.left = e.clientX + 'px';
-            cursor.style.top = e.clientY + 'px';
-            
-            // Ring biraz gecikmeli takip etsin (smooth effect)
-            setTimeout(() => {
-                cursorRing.style.left = e.clientX + 'px';
-                cursorRing.style.top = e.clientY + 'px';
-            }, 50);
-        });
+  <script>
+    // 1. ÖZEL İMLEÇ
+    const cursor = document.querySelector('.cursor');
+    const cursorRing = document.querySelector('.cursor-ring');
+    document.addEventListener('mousemove', (e) => {
+      cursor.style.left = e.clientX + 'px';
+      cursor.style.top = e.clientY + 'px';
+      cursorRing.style.left = e.clientX + 'px';
+      cursorRing.style.top = e.clientY + 'px';
+    });
 
-        // Linklerin üzerine gelince imleç büyüsün
-        document.querySelectorAll('a, button').forEach(link => {
-            link.addEventListener('mouseenter', () => {
-                cursorRing.style.width = '60px';
-                cursorRing.style.height = '60px';
-            });
-            link.addEventListener('mouseleave', () => {
-                cursorRing.style.width = '36px';
-                cursorRing.style.height = '36px';
-            });
-        });
+    // 2. SCROLL PROGRESS & NAV
+    window.addEventListener('scroll', () => {
+      const scrolled = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+      document.getElementById('scrollBar').style.width = scrolled + '%';
+      if (window.scrollY > 50) document.getElementById('navbar').classList.add('scrolled');
+      else document.getElementById('navbar').classList.remove('scrolled');
+    });
 
-        // 2. SCROLL PROGRESS & NAV SCROLL
-        window.onscroll = () => {
-            let winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-            let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            let scrolled = (winScroll / height) * 100;
-            document.getElementById("scrollBar").style.width = scrolled + "%";
+    // 3. ANALİZ MOTORU
+    const analyzeBtn = document.getElementById('analyzeBtn');
+    const analyzeResult = document.getElementById('analyzeResult');
+    const steps = document.querySelectorAll('.analyze-step');
+    const fill = document.querySelector('.analyze-progress-bar-fill');
+    const scoreCard = document.querySelector('.analyze-score-card');
 
-            if (winScroll > 50) {
-                document.getElementById("navbar").classList.add("scrolled");
-            } else {
-                document.getElementById("navbar").classList.remove("scrolled");
-            }
-        };
+    analyzeBtn.addEventListener('click', () => {
+      if(!document.getElementById('igInput').value) return alert("Kullanıcı adı gir!");
+      
+      analyzeBtn.disabled = true;
+      analyzeResult.classList.add('active');
+      document.querySelector('.analyze-progress-bar-wrap').classList.add('active');
+      
+      let p = 0;
+      const interval = setInterval(() => {
+        p += 1;
+        fill.style.width = p + '%';
+        if(p === 20) steps[0].classList.add('show');
+        if(p === 50) { steps[0].classList.add('done'); steps[1].classList.add('show'); }
+        if(p === 80) { steps[1].classList.add('done'); steps[2].classList.add('show'); }
+        if(p >= 100) {
+          clearInterval(interval);
+          steps[2].classList.add('done');
+          scoreCard.style.display = 'block';
+          setTimeout(() => document.querySelector('.score-fill').style.strokeDashoffset = '40', 100);
+        }
+      }, 30);
+    });
 
-        // 3. TEMA DEĞİŞTİRİCİ
-        const themeBtn = document.getElementById('themeToggle');
-        themeBtn.addEventListener('click', () => {
-            const currentTheme = document.body.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            document.body.setAttribute('data-theme', newTheme);
-        });
-
-        // 4. ANALİZ SİMÜLASYONU
-        const analyzeBtn = document.getElementById('analyzeBtn');
-        const progressWrap = document.getElementById('progressWrap');
-        const progressFill = document.getElementById('progressFill');
-        const statusText = document.getElementById('statusText');
-
-        analyzeBtn.addEventListener('click', () => {
-            const username = document.getElementById('igInput').value;
-            if(!username) return alert("Lütfen kullanıcı adı girin!");
-
-            analyzeBtn.disabled = true;
-            progressWrap.style.display = 'block';
-            let width = 0;
-            
-            const steps = ["Veriler çekiliyor...", "Engagement hesaplanıyor...", "Algoritma puanlanıyor...", "Tamamlandı!"];
-            let stepIdx = 0;
-
-            const interval = setInterval(() => {
-                if (width >= 100) {
-                    clearInterval(interval);
-                    statusText.innerText = "Analiz Tamamlandı: Skoru %87 (Çok İyi)";
-                    analyzeBtn.disabled = false;
-                } else {
-                    width += 2;
-                    progressFill.style.width = width + '%';
-                    if(width % 25 === 0) {
-                        statusText.innerText = steps[stepIdx];
-                        stepIdx++;
-                    }
-                }
-            }, 50);
-        });
-    </script>
+    // 4. TEMA DEĞİŞTİRİCİ
+    document.getElementById('themeToggle').addEventListener('click', () => {
+      const theme = document.body.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+      document.body.setAttribute('data-theme', theme);
+    });
+  </script>
 </body>
 </html>
