@@ -2,109 +2,87 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yankura — Gerçek Zamanlı Analiz</title>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <title>Yankura — Gerçek Analiz</title>
     <style>
-        /* Senin o güzel tasarımın (CSS) buraya gelecek. 
-           Yer kaplamasın diye kısalttım ama senin orijinal stilin korunacak */
-        :root { --emerald: #1a5c3a; --gold: #c9a84c; --charcoal: #1c1c1e; --off-white: #f5f0e8; --text-muted: #8a8a8a; }
-        body { background: var(--charcoal); color: var(--off-white); font-family: 'DM Sans', sans-serif; padding: 20px; }
-        .analyze-card { background: #2a2a2d; padding: 2rem; border-radius: 8px; max-width: 500px; margin: 50px auto; border: 1px solid var(--gold); }
-        .ig-row { display: flex; margin-bottom: 1rem; }
-        .ig-at { background: var(--gold); color: #000; padding: 10px; font-weight: bold; }
-        .ig-input { flex: 1; padding: 10px; background: #333; border: 1px solid #444; color: #fff; outline: none; }
-        #analyzeBtn { width: 100%; padding: 12px; background: var(--gold); border: none; cursor: pointer; font-weight: bold; text-transform: uppercase; }
-        #analyzeBtn:disabled { opacity: 0.5; cursor: not-allowed; }
-        #resultArea { margin-top: 20px; display: none; padding: 15px; border-top: 1px dashed var(--gold); }
-        .error-msg { color: #ff6b6b; font-size: 0.9rem; margin-top: 10px; text-align: center; display: none; }
-        .stat-box { display: flex; justify-content: space-between; margin: 10px 0; font-size: 1.1rem; }
-        .stat-val { color: var(--gold); font-family: 'Bebas Neue', sans-serif; }
-        /* Yükleniyor animasyonu */
-        .loader { display: none; text-align: center; margin: 10px 0; color: var(--gold); font-size: 0.8rem; letter-spacing: 2px; }
+        :root { --gold: #c9a84c; --charcoal: #1c1c1e; }
+        body { background: var(--charcoal); color: white; font-family: sans-serif; display: flex; justify-content: center; padding-top: 50px; }
+        .card { background: #2a2a2d; padding: 30px; border-radius: 15px; border: 1px solid var(--gold); width: 350px; text-align: center; }
+        input { width: 80%; padding: 10px; margin-bottom: 10px; background: #333; border: 1px solid var(--gold); color: white; }
+        button { width: 87%; padding: 10px; background: var(--gold); border: none; cursor: pointer; font-weight: bold; }
+        #loading { display: none; margin: 15px 0; color: var(--gold); font-style: italic; }
+        #error { display: none; color: #ff6b6b; margin-top: 15px; font-size: 14px; }
+        #results { display: none; margin-top: 20px; border-top: 1px solid #444; padding-top: 15px; }
+        .stat { display: flex; justify-content: space-between; margin: 8px 0; }
+        .val { color: var(--gold); font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <div class="analyze-card">
-        <h2 style="font-family: 'Bebas Neue'; font-size: 2rem; margin-bottom: 1rem; color: var(--gold);">INSTAGRAM ANALİZ</h2>
-        <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 1.5rem;">Gerçek zamanlı verilerle hesabının gücünü ölç.</p>
-        
-        <div class="ig-row">
-            <div class="ig-at">@</div>
-            <input type="text" id="igInput" class="ig-input" placeholder="kullanıcıadı" autocomplete="off">
-        </div>
-        
-        <button id="analyzeBtn" onclick="gercekAnaliz()">ANALİZİ BAŞLAT</button>
-        <div id="errorMessage" class="error-msg">Hata: Kullanıcı bulunamadı!</div>
-        <div id="loadingStatus" class="loader">VERİLER ÇEKİLİYOR...</div>
+<div class="card">
+    <h2 style="color: var(--gold)">INSTAGRAM ANALİZ</h2>
+    <input type="text" id="username" placeholder="Kullanıcı adı yaz...">
+    <button onclick="analizEt()">ANALİZİ BAŞLAT</button>
+    
+    <div id="loading">Sistem taranıyor, lütfen bekle...</div>
+    <div id="error">Hata: Kullanıcı bulunamadı veya hesap gizli!</div>
 
-        <div id="resultArea">
-            <div class="stat-box"><span>Takipçi:</span> <span id="resFollowers" class="stat-val">0</span></div>
-            <div class="stat-box"><span>Gönderi:</span> <span id="resPosts" class="stat-val">0</span></div>
-            <div class="stat-box"><span>Etkileşim Oranı:</span> <span id="resEng" class="stat-val">%0</span></div>
-        </div>
+    <div id="results">
+        <div class="stat"><span>Takipçi:</span> <span id="followers" class="val">-</span></div>
+        <div class="stat"><span>Takip Edilen:</span> <span id="following" class="val">-</span></div>
+        <div class="stat"><span>Gönderi:</span> <span id="posts" class="val">-</span></div>
+        <div class="stat"><span>Gizli mi?</span> <span id="isPrivate" class="val">-</span></div>
     </div>
+</div>
 
-    <script>
-        async function gercekAnaliz() {
-            const username = document.getElementById('igInput').value.trim();
-            const btn = document.getElementById('analyzeBtn');
-            const errorDiv = document.getElementById('errorMessage');
-            const loader = document.getElementById('loadingStatus');
-            const resultArea = document.getElementById('resultArea');
+<script>
+async function analizEt() {
+    const user = document.getElementById('username').value.trim();
+    const loading = document.getElementById('loading');
+    const error = document.getElementById('error');
+    const results = document.getElementById('results');
 
-            if(!username) {
-                alert("Önce bir kullanıcı adı yaz kanka!");
-                return;
-            }
+    if(!user) return alert("İsim yazmadın kanka!");
 
-            // Arayüzü hazırla
-            btn.disabled = true;
-            errorDiv.style.display = 'none';
-            resultArea.style.display = 'none';
-            loader.style.display = 'block';
+    // Ekranı temizle
+    loading.style.display = 'block';
+    error.style.display = 'none';
+    results.style.display = 'none';
 
-            const options = {
-                method: 'GET',
-                headers: {
-                    'x-rapidapi-key': '4aa5e08428msh9fa81ac08860f25p113396jsn81cd13018273', // Senin anahtarın
-                    'x-rapidapi-host': 'instagram-statistics-api.p.rapidapi.com'
-                }
-            };
-
-            try {
-                // API'ye istek atıyoruz (Kullanıcı bilgilerini getirir)
-                const response = await fetch(`https://instagram-statistics-api.p.rapidapi.com/account_info?username=${username}`, options);
-                const result = await response.json();
-
-                if (result.success === false || !result.data) {
-                    throw new Error("Bulunamadı");
-                }
-
-                // Verileri yerleştir
-                const data = result.data;
-                document.getElementById('resFollowers').innerText = data.follower_count.toLocaleString();
-                document.getElementById('resPosts').innerText = data.media_count;
-                
-                // Basit bir etkileşim hesaplaması (Beğeni/Takipçi * 100)
-                // Not: API detayına göre bu kısım daha da geliştirilebilir.
-                const engRate = (data.engagement_rate || 0).toFixed(2);
-                document.getElementById('resEng').innerText = `%${engRate}`;
-
-                // Sonucu göster
-                loader.style.display = 'none';
-                resultArea.style.display = 'block';
-                btn.disabled = false;
-
-            } catch (error) {
-                console.error(error);
-                loader.style.display = 'none';
-                errorDiv.innerText = "Kanka bu hesap bulunamadı ya da gizli! Lütfen kontrol et.";
-                errorDiv.style.display = 'block';
-                btn.disabled = false;
-            }
+    // BU KISIM API İLE KONUŞUR
+    const url = `https://instagram-scraper-api2.p.rapidapi.com/v1/info?username_or_id=${user}`;
+    const options = {
+        method: 'GET',
+        headers: {
+            'x-rapidapi-key': '4aa5e08428msh9fa81ac08860f25p113396jsn81cd13018273', // Senin keyin
+            'x-rapidapi-host': 'instagram-scraper-api2.p.rapidapi.com'
         }
-    </script>
+    };
+
+    try {
+        const response = await fetch(url, options);
+        const result = await response.json();
+
+        // Eğer Instagram "Böyle bir kullanıcı yok" derse burası çalışır
+        if (!result.data || result.detail === "User not found") {
+            throw new Error("Bulunamadı");
+        }
+
+        // Verileri ekrana yazdırıyoruz
+        document.getElementById('followers').innerText = result.data.follower_count.toLocaleString();
+        document.getElementById('following').innerText = result.data.following_count.toLocaleString();
+        document.getElementById('posts').innerText = result.data.media_count;
+        document.getElementById('isPrivate').innerText = result.data.is_private ? "Evet (Analiz Kısıtlı)" : "Hayır";
+
+        loading.style.display = 'none';
+        results.style.display = 'block';
+
+    } catch (err) {
+        console.error(err);
+        loading.style.display = 'none';
+        error.style.display = 'block'; // YANLIŞ HESAP GİRİLDİĞİNDE BURASI ÇALIŞIR
+    }
+}
+</script>
+
 </body>
 </html>
